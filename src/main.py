@@ -1,3 +1,4 @@
+import copy
 import argparse
 import datetime
 import json
@@ -157,7 +158,7 @@ def train_fish(train_loader, epoch, agg):
         # sample `meta_steps` number of domains to use for the inner loop
         domains = sample_domains(train_loader, args.meta_steps, args.stratified).tolist()
         # prepare model for inner loop update
-        model_inner = modelC(args, weights=model.state_dict()).to(device)
+        model_inner = copy.deepcopy(model)
         model_inner.train()
         opt_inner = opt(model_inner.parameters(), **args.optimiser_args)
         if opt_inner_pre is not None and args.reload_inner_optim:

@@ -15,7 +15,7 @@ dataset_defaults = {
         'meta_steps': 5,
         'selection_metric': 'acc_worst_region',
         'reload_inner_optim': True,
-        'print_iters': 1000
+        'print_iters': 500
     },
     'camelyon': {
         'epochs': 20,
@@ -65,7 +65,7 @@ dataset_defaults = {
         'meta_steps': 10,
         'selection_metric': 'F1-macro_all',
         'reload_inner_optim': True,
-        'print_iters': 1000
+        'print_iters': 500
     },
     'amazon': {
         'epochs': 3,
@@ -82,7 +82,7 @@ dataset_defaults = {
         'meta_steps': 5,
         'selection_metric': '10th_percentile_acc',
         'reload_inner_optim': True,
-        'print_iters': 1000
+        'print_iters': 500
     },
     'civil': {
         'epochs': 5,
@@ -99,7 +99,7 @@ dataset_defaults = {
         'meta_steps': 5,
         'selection_metric': 'acc_wg',
         'reload_inner_optim': True,
-        'print_iters': 1000
+        'print_iters': 500
 },
     'cdsprites': {
         'epochs': 100,

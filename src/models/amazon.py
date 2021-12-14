@@ -4,8 +4,8 @@ from copy import deepcopy
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from transformers import BertForSequenceClassification
-from transformers import BertTokenizerFast
+from transformers import DistilBertForSequenceClassification
+from transformers import DistilBertTokenizerFast
 from transformers import logging
 from wilds.common.data_loaders import get_eval_loader
 from wilds.datasets.amazon_dataset import AmazonDataset
@@ -19,7 +19,7 @@ NUM_CLASSES = 5
 
 def initialize_bert_transform():
     """Adapted from the Wilds library, available at: https://github.com/p-lambda/wilds"""
-    tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
+    tokenizer = DistilBertTokenizerFast.from_pretrained('distilbert-base-uncased')
     def transform(text):
         tokens = tokenizer(
             text,
@@ -29,28 +29,23 @@ def initialize_bert_transform():
             return_tensors='pt')
         x = torch.stack(
             (tokens['input_ids'],
-             tokens['attention_mask'],
-             tokens['token_type_ids']),
+             tokens['attention_mask']),
             dim=2)
         x = torch.squeeze(x, dim=0) # First shape dim is always 1
         return x
     return transform
 
 
-class BertClassifier(BertForSequenceClassification):
-    """Adapted from the Wilds library, available at: https://github.com/p-lambda/wilds"""
-    def __init__(self, args):
-        super().__init__(args)
-        self.d_out = 5
+class DistilBertClassifier(DistilBertForSequenceClassification):
+    def __init__(self, config):
+        super().__init__(config)
 
     def __call__(self, x):
         input_ids = x[:, :, 0]
         attention_mask = x[:, :, 1]
-        token_type_ids = x[:, :, 2]
         outputs = super().__call__(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            token_type_ids=token_type_ids
         )[0]
         return outputs
 
@@ -58,8 +53,8 @@ class Model(nn.Module):
     def __init__(self, args, weights):
         super(Model, self).__init__()
         self.num_classes = NUM_CLASSES
-        self.model = BertClassifier.from_pretrained(
-            'bert-base-uncased',
+        self.model = DistilBertClassifier.from_pretrained(
+            'distilbert-base-uncased',
             num_labels=5,
         )
         if weights is not None:
@@ -95,4 +90,3 @@ class Model(nn.Module):
 
     def forward(self, x):
         return self.model(x)
-
